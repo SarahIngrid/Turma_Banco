@@ -1,0 +1,124 @@
+
+--> Para criar a tabela:
+
+create table <Tabela> (não usar plural)
+(  -- toda chave primária chamar de "id"
+   -- e definir como IDENTITY
+   id INT IDENTITY,
+   nome_campo ... OU nomeCampo ...
+
+   -- toda chave estrangeira chamar
+   -- nomeda tabela + id
+   tabela_id OU tabelaId
+)
+
+
+--> Todo cadastro de endereço deve conter:
+
+    logradouro 	 VARCHAR(100) NOT NULL -- nome da rua, avenida e etc
+    numero_resid VARCHAR(10)  NOT NULL
+    complemento  VARCHAR(100) NULL
+    cep 	 CHAR(8)  NOT NULL
+    bairro  	 VARCHAR(100) NOT NULL
+    cidade 	 VARCHAR(100) NOT NULL
+    uf 		 CHAR(2)  NOT NULL
+
+    -- opcional, em caso do endereço ser utilizado para entregas
+    ponto_de_ref VARCHAR(100) NOT NULL
+ 
+    -- se for utilizar georeferência
+    latitude  VARCHAR(100) NOT NULL
+    longitude VARCHAR(100) NOT NULL
+
+--> Para armazenamento de fotos ou imagens no banco:
+
+    -- A IMAGEM PODE SER GUARDADA NO BANCO DE DADOS NA FORMA DE TEXTO BINÁRIO (Base64) 
+    
+	foto VARBINARY(MAX) NULL
+
+    -- OU ARMAZENAR NO BANCO DE DADOS APENAS A URL(endereço do local da imagem)
+    
+	foto VARCHAR(MAX) NULL
+
+
+--> Exemplo 
+
+CREATE TABLE Cargo
+( 
+   id INT IDENTITY,
+   nomeCargo VARCHAR(100) NOT NULL,
+
+   PRIMARY KEY (id)
+)
+
+CREATE TABLE Funcionario
+( 
+   id       INT IDENTITY,
+   nome     VARCHAR(100) NOT NULL,
+   cpf      CHAR(11)     NOT NULL,
+   rg       VARCHAR(12)  NOT NULL,
+   sexo     CHAR(1)      NOT NULL,
+   dataNasc DATE         NOT NULL,
+   foto     VARBINARY(MAX) NULL,
+   telfone  VARCHAR(25)  NOT NULL,
+   email    VARCHAR(100) NULL, 
+   logradouro 	VARCHAR(100) NOT NULL, -- nome da rua, avenida e etc
+   numero_resid VARCHAR(10)  NOT NULL,
+   complemento  VARCHAR(100) NULL,
+   cep 	        CHAR(8)  NOT NULL,
+   bairro  	VARCHAR(100) NOT NULL,
+   cidade 	VARCHAR(100) NOT NULL,
+   uf 		CHAR(2)  NOT NULL,
+   cargo_id INT NOT NULL,
+
+   PRIMARY KEY (id),
+   FOREIGN KEY (cargo_id) REFERENCES Cargo (id)
+)
+
+*** caso haja a necessidade de armazenar mais de um contato:
+CREATE TABLE Contato
+( 
+   id            INT IDENTITY,
+   tipoContato   VARCHAR(100) NOT NULL, -- Telefone, Email, Website ou Rede Social
+   infoContato   VARCHAR(100) NOT NULL,
+   funcionario_id INT NOT NULL,
+   statusContato BIT NOT NULL, -- 1 = ATIVO ou 0 = INATIVO
+
+   PRIMARY KEY (id),
+   FOREIGN KEY (funcionario_id) REFERENCES Funcionario (id)
+)
+
+*** rotina de acesso ao sistema ***
+CREATE TABLE Usuario
+( 
+   id            INT IDENTITY,
+   nome          VARCHAR(100)	NOT NULL,
+   email         VARCHAR(100)	NOT NULL,
+   senha         VARCHAR(100)	NOT NULL,
+   nivelAcesso   VARCHAR(10)    NULL, -- ADM, TEC ou USER
+   foto		 VARBINARY(MAX) NULL,
+   statusUsuario VARCHAR(20)    NOT NULL, -- ATIVO ou INATIVO ou TROCAR_SENHA
+
+   PRIMARY KEY (id)
+)
+
+
+--> Para criar o banco de dados automaticamente na fase de desenvolvimento:
+-- acrescente esse trecho de código no início do desenvolvimento
+
+USE MASTER IF EXISTS(SELECT * FROM SYS.databases WHERE NAME = 'nome_do_banco')
+DROP DATABASE nome_do_banco
+GO
+
+CREATE DATABASE nome_do_banco
+GO
+
+USE nome_do_banco
+GO
+
+
+
+
+
+
+
